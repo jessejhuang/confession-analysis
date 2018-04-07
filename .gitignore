@@ -6,6 +6,18 @@ __pycache__/
 # C extensions
 *.so
 
+# Google SDK
+google-cloud-sdk/
+python-docs-samples/
+
+#rc
+.bashrc
+
+# VSCode
+.vscode/
+# Keys
+auth-key.json
+
 # Distribution / packaging
 .Python
 env/
@@ -50,19 +62,8 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-local_settings.py
-
-# Flask stuff:
-instance/
-.webassets-cache
-
 # Scrapy stuff:
 .scrapy
-
-# Sphinx documentation
-docs/_build/
 
 # PyBuilder
 target/
@@ -73,12 +74,6 @@ target/
 # pyenv
 .python-version
 
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
 # dotenv
 .env
 
@@ -86,13 +81,6 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
 
 # mkdocs documentation
 /site
