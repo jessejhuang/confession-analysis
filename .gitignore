@@ -9,6 +9,12 @@ __pycache__/
 # Google SDK
 google-cloud-sdk/
 python-docs-samples/
+
+#rc
+.bashrc
+
+# VSCode
+.vscode/
 # Keys
 auth-key.json
 
