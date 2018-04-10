@@ -2,9 +2,13 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.db
 
 # C extensions
 *.so
+
+# Status report
+status-report/
 
 # Google SDK
 google-cloud-sdk/
