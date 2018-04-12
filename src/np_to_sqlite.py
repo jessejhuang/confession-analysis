@@ -20,7 +20,7 @@ def convert_array(text):
     return np.load(out)
 
 
-def insert(vocab, x):
+def insert_dtm(vocab, x):
     sqlite3.register_adapter(np.ndarray, adapt_array)
     sqlite3.register_converter("array", convert_array)
     con = sqlite3.connect("reddit-comments.db",
@@ -35,9 +35,14 @@ def insert(vocab, x):
     con = sqlite3.connect("reddit-comments.db")
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS vocab")
-    cur.execute("CREATE TABLE vocab (word text)")
+    cur.execute('''
+        CREATE TABLE vocab(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            word TEXT
+            )
+        ''')
     for word in vocab:
-        cur.execute("INSERT INTO vocab values(?)", [word])
+        cur.execute("INSERT INTO vocab (word) values(?)", [word])
     con.commit()
     con.close()
 
@@ -57,10 +62,35 @@ def get_dtm():
 def get_vocab():
     con = sqlite3.connect("reddit-comments.db")
     cur = con.cursor()
-    cur.execute("SELECT * FROM vocab")
+    cur.execute("SELECT word FROM vocab ORDER BY id")
     data = cur.fetchall()
     con.close()
     vocab = []
     for word in data:
         vocab.append(word[0])
     return tuple(vocab)
+
+
+def store_topics(topics):
+    sqlite3.register_adapter(np.ndarray, adapt_array)
+    sqlite3.register_converter("array", convert_array)
+    con = sqlite3.connect("reddit-comments.db",
+                          detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    cur.execute("DROP TABLE IF EXISTS topics")
+    cur.execute("CREATE TABLE topics (topic array)")
+    cur.execute("INSERT INTO topics (topic) values(?)", (topics,))
+    con.commit()
+    con.close()
+
+
+def get_topics():
+    sqlite3.register_adapter(np.ndarray, adapt_array)
+    sqlite3.register_converter("array", convert_array)
+    con = sqlite3.connect("reddit-comments.db",
+                          detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    cur.execute("SELECT topic FROM topics")
+    topics = cur.fetchone()[0]
+    con.close()
+    return topics
