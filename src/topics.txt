@@ -1,0 +1,58 @@
+LSA:
+Topic 0: deleted post cosplay hobby one bully claiming claims
+Topic 1: removed must gt brief confessions relay submissions title
+Topic 2: like would people get know need go way
+Topic 3: thank much probably best luck strong stay understanding
+Topic 4: lol would loved yeah wish spot guys go
+Topic 5: like sounds need right yeah seem old said
+Topic 6: post know reddit wisdom sure much siren gay
+Topic 7: yeah get well one said agreed post would
+Topic 8: post get like one know man reddit life
+Topic 9: yeah going post still reddit look appreciate much
+Topic 10: said gay feel good lol get needs parents
+Topic 11: yeah good like well people needs feel seem
+Topic 12: stop know yeah going good wrong parents right
+Topic 13: people know love way advice think see move
+Topic 14: need look https reddit com like probably www
+Topic 15: sounds true way https wrong confession back shitty
+Topic 16: said go gay find someone way thank need
+Topic 17: post wrong sounds look fucking though wisdom maybe
+Topic 18: fucking food going weird super tell animals really
+Topic 19: wrong man people fucking dude im still look
+
+LDA:
+Topic 0: guy good fuck shit lot pretti hey
+Topic 1: would get want ask well sure say
+Topic 2: http amp com reddit r www frog
+Topic 3: go year put fuck never alway kid
+Topic 4: like live someth went got see die
+Topic 5: like sound someon get know need someth
+Topic 6: remov gt confess control specif normal huge
+Topic 7: need stop get good go hope littl
+Topic 8: make peopl thing time even think take
+Topic 9: give anyon father long respons done human
+Topic 10: yeah parent gay much said blame use
+Topic 11: way love find tri feel help think
+Topic 12: read gt treat doctor say option risk
+Topic 13: way work realli right could much problem
+Topic 14: peopl look one back true dude im
+Topic 15: delet call b speak whole post wait
+Topic 16: want get one go person relationship comment
+Topic 17: feel would also tri day thank happen
+Topic 18: time man one women men girl realli
+Topic 19: probabl mayb keep kind go believ best
+
+5 topics each:
+LDA:
+Topic 0: would get year know never want well
+Topic 1: delete http fuck com good post remove
+Topic 2: look give people amp human long thing
+Topic 3: gt work say read people would fuck
+Topic 4: like go need feel way get think
+
+LSA:
+Topic 0: deleted post cosplay hobby one bully claiming claims
+Topic 1: removed must gt brief confessions relay submissions title
+Topic 2: like would people get know need go way
+Topic 3: thank much probably best luck strong stay understanding
+Topic 4: lol would loved yeah wish spot guys go

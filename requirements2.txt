@@ -1,0 +1,17 @@
+chardet==3.0.4
+decorator==4.3.0
+html5lib==1.0.1
+iso8601==0.1.12
+isodate==0.6.0
+networkx==2.1
+nltk==3.2.5
+pdfdocument==3.2
+pdfminer==20140328
+pyparsing==2.2.0
+python-magic==0.4.6
+rdflib==4.2.2
+six==1.11.0
+slate==0.3
+tethne==0.8
+Unidecode==1.0.22
+webencodings==0.5.1

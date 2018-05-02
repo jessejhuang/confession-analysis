@@ -9,10 +9,10 @@ def query_reddit():
     client = bigquery.Client()
     query_job = client.query("""
         SELECT body, downs, created_utc, gilded, id, ups, rand() as rand
-        FROM `fh-bigquery.reddit_comments.2017_10`
+        FROM `fh-bigquery.reddit_comments.2017_01`
         WHERE subreddit IN ('confession')
         ORDER BY rand
-        LIMIT 200""")
+        LIMIT 1000""")
     results = query_job.result()  # Waits for job to complete.
     save_query(results)
 
@@ -40,5 +40,5 @@ if __name__ == '__main__':
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../auth-key.json"
     sys.stdout = open("log.txt", "a")
     query_reddit()
-    print("2017_10")
+    print("2017_01")
     sys.stdout.close()

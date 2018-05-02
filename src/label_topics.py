@@ -40,105 +40,124 @@ def kullback_liebler_divergence(topic, sentence):
     for word in cleaned_sentence:
         try:
             w = vocab.index(word)
-            kl += topic[i] * math.log(
-                topic[i]/(tf(word, cleaned_sentence) / len(cleaned_sentence))
+            kl += topic[1][w] * math.log(
+                topic[1][w]/(tf(word,
+                                cleaned_sentence) / len(cleaned_sentence))
                 )
         except:
             continue
     return kl
 
 
-def candidate_sentence_selection(topics):
+def candidate_sentence_selection():
+    """ Determine the 100 candidate sentences for each topic
+    """
     comments = clean_data.read_comments()
     sentence_candidates = {}
+    topics = np_to_sqlite.get_topics()
+    # topic is a (topic_id, topic) tuple
     for topic in topics:
         neg_kl = {}
         for comment in comments:
             for sentence in comment[0].split('.'):
                 neg_kl[sentence] = -1 * kullback_liebler_divergence(topic,
                                                                     sentence)
-        sentence_candidates[tuple(topic)] = sorted(neg_kl, key=neg_kl.get,
-                                                   reverse=True)[:100]
-    return sentence_candidates
+        # 100 candidate sentences per topic
+        sentence_candidates[topic[0]] = sorted(neg_kl, key=neg_kl.get,
+                                               reverse=True)[:100]
+    np_to_sqlite.store_sentence_candidates(sentence_candidates)
 
 
-def relevance(E, sentence_candidates, nlp):
+def relevance(E, topic, sentence_candidates, nlp):
+    print("In relevance")
     similarity = 0
-    for sentence in sentence_candidates:
+    topic_sentences = sentence_candidates
+    for sentence_tuple in topic_sentences:
+        sentence = sentence_tuple[0]
         simE = 0
         for sentenceE in E:
             simE += nlp(sentence).similarity(nlp(sentenceE))
-        simS = 0
-        for sentenceS in sentence_candidates:
-            simS += nlp(sentence).similarity(nlp(sentenceS))
-        simS *= 0.05
-        similarity += min(simE, simS)
+        simV = 0
+        for sentenceV_tuple in topic_sentences:
+            sentenceV = sentenceV_tuple[0]
+            simV += nlp(sentence).similarity(nlp(sentenceV))
+        simV *= 0.05
+        similarity += min(simE, simV)
     return similarity
 
 
-def coverage(E, topic, vocab):
+def coverage(E, topic_id, topics, vocab):
+    print("In coverage")
     cover = 0
     for w, word in enumerate(vocab):
         x = 0
         for sentence in E:
             x += tf(word, clean(sentence))
         x = math.sqrt(x)
-        cover += topic[w] * x
+        cover += topics[topic_id - 1][1][w] * x
     cover *= 250
     return 0
 
 
-def discrimination(E, topic, topics, vocab):
+def discrimination(E, topic_id, topics, vocab):
     discrimination = 0
-    for topic_prime in topics:
-        if tuple(topic_prime) == tuple(topic):
-            continue
-        for sentence in E:
-            clean_sentence = clean(sentence)
-            for w, word in enumerate(vocab):
-                discrimination += topic[w] * tf(word, clean_sentence)
-    discrimination = -300 * discrimination
+    # for (topic_id_prime, topic_prime) in topics:
+    #     if topic_id == topic_id_prime:
+    #         continue
+    #     for sentence in E:
+    #         clean_sentence = clean(sentence)
+    #         for w, word in enumerate(vocab):
+    #             discrimination += topic_prime[w] * tf(word, clean_sentence)
+    # discrimination = -300 * discrimination
     return discrimination
 
 
-def summary_hueristic(E, sentence_candidates, topic, topics, vocab, nlp):
-    return relevance(E, sentence_candidates, nlp) + \
-        coverage(E, topic, vocab) + \
-        discrimination(E, topic, topics, vocab)
+def summary_hueristic(E, sentence_candidates, topic_id, topics, vocab, nlp):
+    return relevance(E, topic_id, sentence_candidates, nlp) + \
+        coverage(E, topic_id, topics, vocab) + \
+        discrimination(E, topic_id, topics, vocab)
 
 
 def extract_summaries(L):
     vocab = np_to_sqlite.get_vocab()
     nlp = spacy.load('en')
     topics = np_to_sqlite.get_topics()
-    V = candidate_sentence_selection(topics)
     topic_summaries = {}
-    for topic in topics:
-        U = V[tuple(topic)]
+    for (topic_id, topic) in topics:
+        V = np_to_sqlite.get_sentence_candidates(topic_id)
+        U = copy.deepcopy(V)
         E = []
+        print("Topic: ", topic_id)
         while len(U) > 0:
-            s_hat = U[0]
+            # s_hat, optimal sentence, initially set to first candidate
+            s_hat = U[0][0]
             s_hat_h = 0
             Es_hat = copy.deepcopy(E)
-            for sentence in U:
+            for sentence_tuple in U:
+                sentence = sentence_tuple[0]
+                print("Sentence: ", sentence)
+                if len(sentence_tuple) < 1:
+                    continue
                 Es = copy.deepcopy(E)
                 Es.append(sentence)
-                h = (summary_hueristic(Es, V, topic, topics, vocab, nlp) -
-                     summary_hueristic(E, V, topic, topics, vocab, nlp)) / \
-                    (len(sentence) ** 0.15)
+                h = (summary_hueristic(Es, V, topic_id, topics, vocab, nlp) -
+                     summary_hueristic(E, V, topic_id, topics, vocab, nlp)) / \
+                    (len(sentence.split(' ')) ** 0.15)
                 if h > s_hat_h:
                     s_hat_h = h
                     s_hat = sentence
                     Es_hat = Es
             Ewc = 0
             for sentence in E:
-                Ewc += len(sentence)
+                Ewc += len(sentence.split(' '))
             if Ewc + len(s_hat) < L and \
-               summary_hueristic(Es_hat, V, topic, topics, vocab, nlp) - \
-               summary_hueristic(E, V, topic, topics, vocab, nlp) > 0:
+               summary_hueristic(Es_hat, V, topic_id, topics, vocab, nlp) - \
+               summary_hueristic(E, V, topic_id, topics, vocab, nlp) > 0:
                 E = Es_hat
-        topic_summaries[tuple(topic)] = E
-        return topic_summaries
+            U.remove(s_hat)
+            print("Length of U: ", len(U))
+        topic_summaries[topic_id] = E
+    return topic_summaries
 
 
 if __name__ == '__main__':

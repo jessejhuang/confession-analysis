@@ -78,19 +78,61 @@ def store_topics(topics):
                           detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS topics")
-    cur.execute("CREATE TABLE topics (topic array)")
-    cur.execute("INSERT INTO topics (topic) values(?)", (topics,))
+    cur.execute('''CREATE TABLE topics(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            topic array
+            )
+        ''')
+    for topic in topics:
+        cur.execute("INSERT INTO topics(topic) values(?)", (topic,))
     con.commit()
     con.close()
 
 
 def get_topics():
+    """Returns topics
+
+    Topics returned as list of two-element tuples, where each tuple
+    is contains the topic id, and a numpy.ndarray of size len(vocab)
+    """
     sqlite3.register_adapter(np.ndarray, adapt_array)
     sqlite3.register_converter("array", convert_array)
     con = sqlite3.connect("reddit-comments.db",
                           detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
-    cur.execute("SELECT topic FROM topics")
-    topics = cur.fetchone()[0]
+    cur.execute("SELECT * FROM topics")
+    topics = cur.fetchall()
     con.close()
     return topics
+
+
+def store_sentence_candidates(sentence_candidates):
+    """ Store sentence candidates for each topic
+    """
+    connection = sqlite3.connect('reddit-comments.db')
+    c = connection.cursor()
+    c.execute("DROP TABLE IF EXISTS sentence_candidates")
+    c.execute('''
+        CREATE TABLE sentence_candidates(
+            body text,
+            topic_id
+            )
+        ''')
+    for topic_id in sentence_candidates:
+        for sentence in sentence_candidates.get(topic_id):
+            c.execute('''INSERT INTO sentence_candidates(body, topic_id)
+                         VALUES(?,?)
+                ''', (sentence, topic_id))
+    connection.commit()
+    connection.close()
+
+
+def get_sentence_candidates(topic_id):
+    """Get sentence candidates for each topic by topic id"""
+    connection = sqlite3.connect('reddit-comments.db')
+    c = connection.cursor()
+    c.execute("SELECT body from sentence_candidates where topic_id =?",
+              (topic_id,))
+    sentence_candidates = c.fetchall()
+    connection.close()
+    return sentence_candidates
