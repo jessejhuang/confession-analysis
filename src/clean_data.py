@@ -47,4 +47,4 @@ if __name__ == '__main__':
                 doc_term_matrix[i][word_index] += 1
             except ValueError:
                 pass
-    np_to_sqlite.insert(vocab, doc_term_matrix)
+    np_to_sqlite.insert_dtm(vocab, doc_term_matrix)
