@@ -20,7 +20,7 @@ python-docs-samples/
 # VSCode
 .vscode/
 # Keys
-auth-key.json
+gcloud_credentials.json
 
 # Distribution / packaging
 .Python
