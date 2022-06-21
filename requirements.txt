@@ -18,7 +18,7 @@ lda==1.0.5
 MarkupSafe==1.0
 matplotlib==2.2.3
 nltk==3.3
-numpy==1.15.0
+numpy==1.22.0
 packaging==17.1
 pbr==4.2.0
 Pillow==5.2.0
